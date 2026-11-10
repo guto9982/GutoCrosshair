@@ -1,0 +1,42 @@
+GUTO CROSSHAIR — PROJETO WINDOWS
+================================
+
+O que está incluído
+- Aplicativo Windows em C# / .NET 8 WinForms.
+- Overlay transparente, sempre no topo e configurado para permitir clique através dele.
+- Atalho global F8 para mostrar/ocultar.
+- Formatos: cruz, ponto, círculo e cruz com ponto.
+- Cor, tamanho, espaçamento, espessura e opacidade ajustáveis.
+- Preferências salvas no perfil local do Windows.
+- Fluxo de compilação para Windows x64 e x86.
+
+IMPORTANTE SOBRE O EXECUTÁVEL
+Este ZIP contém o projeto e a automação de compilação; não contém um .EXE já compilado.
+O ambiente que criou este pacote não é Windows e não tem o compilador .NET instalado,
+portanto não é possível produzir ou testar aqui um executável Windows pronto.
+
+Como obter os .EXE
+1. Crie um repositório no GitHub.
+2. Envie todos os arquivos e pastas deste ZIP para o repositório, mantendo
+   .github/workflows/build-windows.yml no mesmo caminho.
+3. Abra a aba Actions.
+4. Escolha “Compilar Guto Crosshair para Windows” e clique em “Run workflow”.
+5. Quando a execução terminar, baixe os artefatos:
+   - GutoCrosshair-win-x64: Windows 64 bits.
+   - GutoCrosshair-win-x86: Windows 32 bits.
+6. Extraia o ZIP do artefato e execute GutoCrosshair.exe.
+
+COMPATIBILIDADE / LIMITES
+- O alvo principal é Windows 10 e Windows 11.
+- A versão x86 destina-se a Windows 32 bits; precisa ser validada em um PC real.
+- O overlay costuma funcionar melhor com o jogo em “janela sem bordas”.
+- Em tela cheia exclusiva, alguns jogos/drivers podem esconder overlays externos.
+- Não injeta código, não altera memória nem arquivos do FiveM e não tenta contornar anticheat.
+- A política de cada servidor pode proibir overlays; confirme antes de usar.
+- O programa não possui assinatura digital. O Windows pode exibir o SmartScreen;
+  isso não prova que o arquivo é malicioso, mas sempre baixe apenas do repositório
+  que você mesmo controla e confira o código antes de distribuir.
+- O projeto ainda precisa de teste em Windows real antes de ser divulgado aos amigos.
+
+Configurações ficam em:
+%LOCALAPPDATA%\GutoCrosshair\settings.json
