@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
-
+using System.Collections.Generic;
 namespace GutoCrosshair;
 
 internal static class Program
@@ -78,9 +78,10 @@ internal sealed class MainForm : Form
         overlay = new OverlayForm(settings);
         Text = "Guto Crosshair";
         StartPosition = FormStartPosition.CenterScreen;
-        FormBorderStyle = FormBorderStyle.FixedSingle;
-        MaximizeBox = false;
-        ClientSize = new Size(980, 680);
+        FormBorderStyle = FormBorderStyle.Sizable;
+        MaximizeBox = true;
+        MinimumSize = new Size(980, 680);
+        ClientSize = new Size(1200, 800);
         BackColor = Bg;
         ForeColor = Color.White;
         Font = new Font("Segoe UI", 9F);
@@ -92,8 +93,67 @@ internal sealed class MainForm : Form
         loaded = true;
         ApplySettings();
         ShowPage("home");
+        Resize += (_, _) => ApplyResponsiveScale();
     }
 
+    private readonly Dictionary<Control, (Rectangle Bounds, float FontSize)> originalLayout = new();
+private int originalWidth;
+private int originalHeight;
+private bool layoutCaptured;
+
+protected override void OnShown(EventArgs e)
+{
+    base.OnShown(e);
+
+    originalWidth = pageHost.ClientSize.Width;
+    originalHeight = pageHost.ClientSize.Height;
+
+    CaptureLayout(pageHost);
+
+    layoutCaptured = true;
+    WindowState = FormWindowState.Maximized;
+    ApplyResponsiveScale();
+}
+
+private void CaptureLayout(Control parent)
+{
+    foreach (Control c in parent.Controls)
+    {
+        originalLayout[c] = (c.Bounds, c.Font.Size);
+        CaptureLayout(c);
+    }
+}
+
+private void ApplyResponsiveScale()
+{
+    if (!layoutCaptured || originalWidth <= 0 || originalHeight <= 0)
+        return;
+
+    float sx = (float)pageHost.ClientSize.Width / originalWidth;
+    float sy = (float)pageHost.ClientSize.Height / originalHeight;
+    float scale = Math.Max(1f, Math.Min(sx, sy));
+
+    foreach (Control c in originalLayout.Keys)
+    {
+        var original = originalLayout[c];
+
+        if (c.Dock == DockStyle.None)
+        {
+            c.Bounds = new Rectangle(
+                (int)(original.Bounds.X * scale),
+                (int)(original.Bounds.Y * scale),
+                (int)(original.Bounds.Width * scale),
+                (int)(original.Bounds.Height * scale));
+        }
+
+        float fontSize = Math.Max(8f, original.FontSize * scale);
+
+        if (Math.Abs(c.Font.Size - fontSize) > 0.5f)
+        {
+            c.Font = new Font(c.Font.FontFamily, fontSize, c.Font.Style);
+        }
+    }
+}
     private static TrackBar MakeTrack(int min, int max, int value) => new()
     {
         Minimum = min, Maximum = max, Value = value, TickStyle = TickStyle.None,
